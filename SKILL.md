@@ -91,9 +91,23 @@ curl -s -X POST 'https://api.buffer.com' \
   -d '{"query": "mutation { createPost(input: { text: \"Hello world! 🚀\", channelId: \"CHANNEL_ID\", schedulingType: automatic, mode: shareNow }) { ... on PostActionSuccess { post { id text } } ... on MutationError { message } } }"}'
 ```
 
+**"Post video to Buffer"**
+
+```bash
+# First upload video to 0x0.st
+curl -F "file=@video.mp4" https://0x0.st
+
+# Then post with video URL
+curl -s -X POST 'https://api.buffer.com' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -d '{"query": "mutation { createPost(input: { text: \"Check out this video!\", channelId: \"CHANNEL_ID\", schedulingType: automatic, mode: shareNow, assets: { videos: [{ url: \"https://0x0.st/VIDEO_URL.mp4\" }] } }) { ... on PostActionSuccess { post { id text } } ... on MutationError { message } } }"}'
+```
+
 ## Notes
 
 - Buffer API endpoint: https://api.buffer.com (not bufferapp.com)
 - Uses GraphQL, not REST
 - Requires Bearer token in Authorization header
 - Rate limit: 60 requests per minute
+- For videos: upload to https://0x0.st first, then use the URL in `assets.videos[{url: "..."}]`
